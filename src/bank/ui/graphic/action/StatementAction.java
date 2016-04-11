@@ -39,6 +39,7 @@ import bank.business.domain.CurrentAccountId;
 import bank.business.domain.Deposit;
 import bank.business.domain.Transaction;
 import bank.business.domain.Transfer;
+import bank.business.domain.Transfer.Status;
 import bank.business.domain.Withdrawal;
 import bank.ui.TextManager;
 import bank.ui.graphic.BankGraphicInterface;
@@ -88,7 +89,7 @@ public class StatementAction extends AccountAbstractAction {
 
 		@Override
 		public int getColumnCount() {
-			return 5;
+			return 6;
 		}
 
 		@Override
@@ -108,6 +109,9 @@ public class StatementAction extends AccountAbstractAction {
 				key = "details";
 				break;
 			case 4:
+				key = "status";
+				break;
+			case 5:
 				key = "amount";
 				break;
 			default:
@@ -156,6 +160,20 @@ public class StatementAction extends AccountAbstractAction {
 				}
 				break;
 			case 4:
+				if (t instanceof Transfer) {		
+					Transfer transfer = (Transfer) t;
+					if (transfer.getStatus() == Status.Status_Finished){
+						val = textManager.getText("status.Finished");
+					}
+					else {
+						val = textManager.getText("status.Pending");
+					}
+				}
+				else {
+					val = textManager.getText("status.Finished");
+				}
+				break;
+			case 5:
 				if (t instanceof Deposit) {
 					val = "+ " + t.getAmount();
 				} else if (t instanceof Transfer) {
