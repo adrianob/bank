@@ -51,6 +51,8 @@ public class BranchGUIInterface extends BankGraphicInterface {
 				accountOperationService));
 		addPanelAction(new TransferAction(this, textManager,
 				accountOperationService));
+				accountManagementService));
+
 	}
 
 	@Override
