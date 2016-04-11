@@ -15,6 +15,7 @@ import bank.ui.graphic.action.DepositAction;
 import bank.ui.graphic.action.EmployeeLoginAction;
 import bank.ui.graphic.action.ExitAction;
 import bank.ui.graphic.action.LogoutAction;
+import bank.ui.graphic.action.PendingTransfersAction;
 import bank.ui.graphic.action.StatementAction;
 import bank.ui.graphic.action.TransferAction;
 import bank.ui.graphic.action.WithdrawalAction;
@@ -51,6 +52,9 @@ public class BranchGUIInterface extends BankGraphicInterface {
 				accountOperationService));
 		addPanelAction(new TransferAction(this, textManager,
 				accountOperationService));
+		addPanelAction(new PendingTransfersAction(this, textManager,
+				accountManagementService));
+
 	}
 
 	@Override
