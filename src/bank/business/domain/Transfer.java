@@ -6,17 +6,20 @@ package bank.business.domain;
  */
 public class Transfer extends Transaction {
 
+	public static final int MAX_AMOUNT = 5000;
 	private CurrentAccount destinationAccount;
+
 	public enum Status {
-		Status_Finished,
-		Status_Pending,
+		Status_Finished, Status_Pending,
 	};
+
 	private Status status;
-	public Transfer(OperationLocation location, CurrentAccount account,
-			CurrentAccount destinationAccount, double amount) {
+
+	public Transfer(OperationLocation location, CurrentAccount account, CurrentAccount destinationAccount,
+			double amount) {
 		super(location, account, amount);
 		this.destinationAccount = destinationAccount;
-		this.status = Status.Status_Finished; // temp;
+		this.status = this.needsAuthorization() ? Status.Status_Pending : Status.Status_Finished;
 	}
 
 	/**
@@ -29,7 +32,9 @@ public class Transfer extends Transaction {
 	public Status getStatus() {
 		return status;
 	}
-
-
+	
+	public boolean needsAuthorization() {
+		return this.getLocation() instanceof ATM && this.getAmount() >= Transfer.MAX_AMOUNT;
+	}
 
 }
