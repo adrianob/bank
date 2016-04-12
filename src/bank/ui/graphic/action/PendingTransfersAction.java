@@ -5,13 +5,13 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,12 +24,12 @@ import bank.ui.TextManager;
 import bank.ui.graphic.BankGraphicInterface;
 import bank.ui.graphic.GUIUtils;
 
-
 public class PendingTransfersAction extends BankAction {
 
 	private static final long serialVersionUID = 558966388633948681L;
 	private JDialog dialog;
 	private JTable transactionsTable;
+	private Vector<Transfer> transactions;
 	AccountManagementService accountManagementService;
 	public PendingTransfersAction(BankGraphicInterface bankInterface, 
 			TextManager textManager,
@@ -39,25 +39,20 @@ public class PendingTransfersAction extends BankAction {
 		super.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
 		super.putValue(Action.NAME, textManager.getText("action.pendingTransfers"));
 		this.accountManagementService = accountManagementService;
-
 	}
 	
 
-	
 	public void close() {
 		dialog.dispose();
 		dialog = null;
 	}
 	
-	@SuppressWarnings("unused")
 	public class PendingTransactionTableModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = 1550342879460111728L;
 		
-		private List<Transfer> transactions;
-		
-		public PendingTransactionTableModel(List<Transfer> transactions) {
-			this.transactions = new ArrayList<>(transactions);
+		public PendingTransactionTableModel(Vector<Transfer> Transfer) {
+			transactions = Transfer;
 		}
 		
 		@Override
@@ -96,13 +91,13 @@ public class PendingTransfersAction extends BankAction {
 			Object val = null;
 			switch (columnIndex) {
 			case 0:
-				val = t.getAccount().toString();
+				val = t.getAccount().getId().getNumber();
 				break;
 			case 1:
-				val = t.getDestinationAccount().toString();
+				val = t.getDestinationAccount().getId().getNumber();
 				break;
 			case 2:
-				val = t.getAmount();
+				val = (Number) t.getAmount();
 				break;
 			default:
 				assert false;
@@ -113,18 +108,37 @@ public class PendingTransfersAction extends BankAction {
 	}
 
 
+	private void updateList() {
+		transactions = accountManagementService.getAllTransactions();
+		this.transactionsTable.setModel(new PendingTransactionTableModel(transactions));
+	}
+	
+	private int readRow() {
+		int i = transactionsTable.getSelectedRow();
+		if (i == -1) {
+			// No row was selected
+			GUIUtils.INSTANCE.showMessage(bankInterface.getFrame(),
+					textManager.getText("message.choose.transfer"), JOptionPane.WARNING_MESSAGE);
+		}
+		return i;
+	}
+	
 	@Override
 	public void execute() throws Exception {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-		// Confirmation Buttons
+		// Buttons
 		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		JButton cancelButton = new JButton(textManager.getText("button.deny"));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				close();
+				int i = readRow();
+				if (i == -1)
+					return;
+				// Deny the transfer
+				//transactions.get(i)
 			}
 		});
 		buttonsPanel.add(cancelButton);
@@ -132,34 +146,26 @@ public class PendingTransfersAction extends BankAction {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// Autoriza transação
-				// Atualiza lista
+				int i = readRow();
+				if (i == -1)
+					return;
+				// Authorize the transfer
+				//transactions.get(i)
+				
+				updateList();
 			}
 		});
 		buttonsPanel.add(okButton);
-
-		// TODO: Move to function that loads the transactions
+		
+		// Build the transaction table
 		JPanel transactionsPanel = new JPanel();
 		transactionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		this.transactionsTable = new JTable();
-		
-		/*
-		List<Transfer> transfers = new Vector<Transfer>();
-		List<Transaction> allTransactions = accountManagementService.getAllTransactions();
-		for (Transaction transaction : allTransactions){
-			if (transaction instanceof Transaction ){
-				transfers.add((Transfer) transaction);
-			}
-		}
-		this.transactionsTable.setModel(new PendingTransactionTableModel(transfers));
-		*/
-		//this.transactionsTable.setModel(new PendingTransactionTableModel(null));
-		
+		updateList();
 		JScrollPane scrollPane = new JScrollPane(this.transactionsTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		transactionsPanel.add(scrollPane);
 
-		
 		mainPanel.add(buttonsPanel, BorderLayout.SOUTH);
 		mainPanel.add(transactionsPanel,BorderLayout.NORTH);
 
