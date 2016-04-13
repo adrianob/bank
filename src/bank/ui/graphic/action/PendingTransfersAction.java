@@ -137,8 +137,8 @@ public class PendingTransfersAction extends BankAction {
 				int i = readRow();
 				if (i == -1)
 					return;
-				// Deny the transfer
-				//transactions.get(i)
+				transactions.get(i).deny();
+				updateList();
 			}
 		});
 		buttonsPanel.add(cancelButton);
@@ -149,9 +149,7 @@ public class PendingTransfersAction extends BankAction {
 				int i = readRow();
 				if (i == -1)
 					return;
-				// Authorize the transfer
-				//transactions.get(i)
-				
+				transactions.get(i).authorize();
 				updateList();
 			}
 		});
