@@ -2,8 +2,8 @@
  * Created on 16 Dec 2013 16:17:23
  */
 package bank.business;
-import java.util.*;
 import java.util.Date;
+import java.util.Vector;
 
 import bank.business.domain.CurrentAccount;
 import bank.business.domain.Employee;
@@ -22,6 +22,6 @@ public interface AccountManagementService {
 	public Employee login(String username, String password)
 			throws BusinessException;
 	
-	public Vector<Transfer> getAllTransactions();
+	public Vector<Transfer> getAllTransfers();
 
 }

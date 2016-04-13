@@ -29,7 +29,7 @@ public class PendingTransfersAction extends BankAction {
 	private static final long serialVersionUID = 558966388633948681L;
 	private JDialog dialog;
 	private JTable transactionsTable;
-	private Vector<Transfer> transactions;
+	private Vector<Transfer> transfers;
 	AccountManagementService accountManagementService;
 	public PendingTransfersAction(BankGraphicInterface bankInterface, 
 			TextManager textManager,
@@ -50,9 +50,9 @@ public class PendingTransfersAction extends BankAction {
 	public class PendingTransactionTableModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = 1550342879460111728L;
-		
-		public PendingTransactionTableModel(Vector<Transfer> Transfer) {
-			transactions = Transfer;
+		private Vector<Transfer> transfers;
+		public PendingTransactionTableModel(Vector<Transfer> transfers) {
+			this.transfers = transfers;
 		}
 		
 		@Override
@@ -82,12 +82,12 @@ public class PendingTransfersAction extends BankAction {
 
 		@Override
 		public int getRowCount() {
-			return transactions.size();
+			return transfers.size();
 		}
 
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			Transfer t = transactions.get(rowIndex);
+			Transfer t = transfers.get(rowIndex);
 			Object val = null;
 			switch (columnIndex) {
 			case 0:
@@ -109,8 +109,8 @@ public class PendingTransfersAction extends BankAction {
 
 
 	private void updateList() {
-		transactions = accountManagementService.getAllTransactions();
-		this.transactionsTable.setModel(new PendingTransactionTableModel(transactions));
+		transfers = accountManagementService.getAllTransfers();
+		this.transactionsTable.setModel(new PendingTransactionTableModel(transfers));
 	}
 	
 	private int readRow() {
@@ -118,7 +118,7 @@ public class PendingTransfersAction extends BankAction {
 		if (i == -1) {
 			// No row was selected
 			GUIUtils.INSTANCE.showMessage(bankInterface.getFrame(),
-					textManager.getText("message.choose.transfer"), JOptionPane.WARNING_MESSAGE);
+					textManager.getText("message.select.transfer"), JOptionPane.WARNING_MESSAGE);
 		}
 		return i;
 	}
@@ -137,7 +137,7 @@ public class PendingTransfersAction extends BankAction {
 				int i = readRow();
 				if (i == -1)
 					return;
-				transactions.get(i).deny();
+				transfers.get(i).deny();
 				updateList();
 			}
 		});
@@ -149,7 +149,7 @@ public class PendingTransfersAction extends BankAction {
 				int i = readRow();
 				if (i == -1)
 					return;
-				transactions.get(i).authorize();
+				transfers.get(i).authorize();
 				updateList();
 			}
 		});
