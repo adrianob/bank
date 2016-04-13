@@ -165,6 +165,9 @@ public class StatementAction extends AccountAbstractAction {
 					if (transfer.getStatus() == Status.Status_Finished){
 						val = textManager.getText("status.Finished");
 					}
+					else if (transfer.getStatus() == Status.Status_Canceled) {
+						val = textManager.getText("status.Canceled");
+					}
 					else {
 						val = textManager.getText("status.Pending");
 					}

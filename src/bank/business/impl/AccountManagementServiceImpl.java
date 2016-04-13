@@ -4,6 +4,7 @@
 package bank.business.impl;
 
 import java.util.Date;
+import java.util.Vector;
 
 import bank.business.AccountManagementService;
 import bank.business.BusinessException;
@@ -12,6 +13,7 @@ import bank.business.domain.Client;
 import bank.business.domain.CurrentAccount;
 import bank.business.domain.Employee;
 import bank.business.domain.OperationLocation;
+import bank.business.domain.Transfer;
 import bank.data.Database;
 import bank.util.RandomString;
 
@@ -63,6 +65,19 @@ public class AccountManagementServiceImpl implements AccountManagementService {
 		}
 
 		return employee;
+	}
+
+	@Override
+	public Vector<Transfer> getAllTransfers() {
+		Vector<Transfer> temp = new Vector<Transfer>();
+		for (CurrentAccount account : database.getAllCurrentAccounts()) {
+			for (Transfer transfer : account.getTransfers()) {
+				if (transfer.getStatus() == Transfer.Status.Status_Pending) {
+					temp.add(transfer);
+				}
+			}
+		}
+		return temp;
 	}
 
 }

@@ -1,5 +1,7 @@
 package bank.business.domain;
 
+import bank.business.BusinessException;
+
 /**
  * @author Ingrid Nunes
  * 
@@ -10,7 +12,7 @@ public class Transfer extends Transaction {
 	private CurrentAccount destinationAccount;
 
 	public enum Status {
-		Status_Finished, Status_Pending,
+		Status_Finished, Status_Pending, Status_Canceled
 	};
 
 	private Status status;
@@ -27,6 +29,30 @@ public class Transfer extends Transaction {
 	 */
 	public CurrentAccount getDestinationAccount() {
 		return destinationAccount;
+	}
+	
+	public void authorize() {
+		if (this.getStatus() == Status.Status_Pending) {
+			try {
+				this.getDestinationAccount().deposit(this.getLocation(), 0, this.getAmount());
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.status = Status.Status_Finished;
+		}
+	}
+	
+	public void deny() {
+		if (this.getStatus() == Status.Status_Pending) {
+			try {
+				this.getAccount().deposit(this.getLocation(), 0, this.getAmount());
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.status = Status.Status_Canceled;
+		}
 	}
 
 	public Status getStatus() {
