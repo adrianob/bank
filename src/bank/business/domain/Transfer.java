@@ -12,7 +12,7 @@ public class Transfer extends Transaction {
 	private CurrentAccount destinationAccount;
 
 	public enum Status {
-		Status_Finished, Status_Pending,
+		Status_Finished, Status_Pending, Status_Canceled
 	};
 
 	private Status status;
@@ -51,7 +51,7 @@ public class Transfer extends Transaction {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			this.status = Status.Status_Finished;
+			this.status = Status.Status_Canceled;
 		}
 	}
 
