@@ -69,15 +69,15 @@ public class AccountManagementServiceImpl implements AccountManagementService {
 
 	@Override
 	public Vector<Transfer> getAllTransfers() {
-		Vector<Transfer> temp = new Vector<Transfer>();
+		Vector<Transfer> transfers = new Vector<Transfer>();
 		for (CurrentAccount account : database.getAllCurrentAccounts()) {
 			for (Transfer transfer : account.getTransfers()) {
 				if (transfer.getStatus() == Transfer.Status.Status_Pending) {
-					temp.add(transfer);
+					transfers.add(transfer);
 				}
 			}
 		}
-		return temp;
+		return transfers;
 	}
 
 }
