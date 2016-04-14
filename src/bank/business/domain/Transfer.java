@@ -40,6 +40,7 @@ public class Transfer extends Transaction {
 				e.printStackTrace();
 			}
 			this.status = Status.Status_Finished;
+			this.getDestinationAccount().getTransfers().add(this);
 		}
 	}
 	
